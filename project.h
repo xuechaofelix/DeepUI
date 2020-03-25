@@ -4,16 +4,18 @@
 #include <QString>
 #include <QVariant>
 
-#include "pluginconfigure.h"
+//#include "pluginconfigure.h"
 
-#define JANI_FILE 0
-#define PRISM_FILE 1
+#define ROBUSTNESS_INF 0
+#define ROBUSTNESS_BRI 1
+#define ROBUSTNESS_CUS 2
 
 #define UNSERILIZE_FAILED -1
 #define UNSERILIZE_SUCCESS 0
 
 
 #define ELEMENT_NUMBER 2
+
 
 class Project: public QObject
 {
@@ -22,17 +24,17 @@ private:
     QString path;
     QString modelFile;
     QString formuleFile;
-    int modelType = PRISM_FILE;
+   // QString robustnessType = ROBUSTNESS_TYPE_LINFBALL;
     QString name;
 
     bool isSetModelFile = false;
     bool isSetFormuleFile = false;
-    bool isSetModelType = false;
+   // bool isSetRobustnessType = false;
 
     QString serilize();
     int unserilize(const QString & project);
 
-    PluginConfigure * pcf;
+    //PluginConfigure * pcf;
 
 signals:
     void closeFile();
@@ -43,30 +45,29 @@ public:
     Project( const QString & name);
     void setModelFile(const QString & modelFileName);
     void setFormuleFile(const QString & formuleFileName);
-    void setModelType(int modelType);
+   // void setRobustnessType(QString robustnessType);
 
     QString getModelFileSuffix();
     QString getFormuleFileSuffix();
 
-    int getModelType();
+    //QString getRobustnessType();
     QString getModelFile();
     QString getFormuleFile();
     QString getModelFileName();
     QString getFormuleFileName();
     QString getPath();
     QString getName();
-    QString getPluginFile();
+    QString generateParametersList();
 
     bool isValidModelFile();
     bool isValidFormuleFile();
-    bool isValidModelType();
+    //bool isValidRobustnessType();
 
     void save();
     void open(QString projectFile);
     QVariant get(int column) const;
     int count() const;
 
-    PluginConfigure * getPluginConfigure();
 };
 
 #endif // PROJECT_H

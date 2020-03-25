@@ -21,9 +21,9 @@ int main(int argc, char *argv[])
         tmpPath.mkdir("lib");
         tmpPath.cd("lib");
     }
-     QFileInfo info(tmpPath.absoluteFilePath("epmc-standard.jar"));
+     QFileInfo info(tmpPath.absoluteFilePath("deepsymbol"));
      if(!info.isFile()){
-        if(! QFile::copy(":/resources/epmc-standard.jar",info.absoluteFilePath()))
+        if(! QFile::copy(":/resources/deepsymbol",info.absoluteFilePath()))
         {
             //QMessageBox::warning(this, "Worning", "Failed to access TemporaryFile!");
             qDebug() << "Failed to access TemporaryFile!";

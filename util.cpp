@@ -6,7 +6,7 @@ Util::Util()
 {
 
 }
-int Util::createFile(QString filePath,QString fileName)
+int Util::createFile( const QString filePath, const QString fileName)
 {
     QDir tempDir;
     QString currentDir = tempDir.currentPath();
@@ -33,4 +33,24 @@ int Util::createFile(QString filePath,QString fileName)
     tempFile->close();
     tempDir.setCurrent(currentDir);
     return 0;
+}
+
+int Util::parseJsonFile(const QString filePath, const QString fileName, QJsonObject & result)
+{
+    QDir filepath(filePath);
+
+    QFile file(filepath.absoluteFilePath(fileName));
+        file.open(QIODevice::ReadOnly | QIODevice::Text);
+        QString value = file.readAll();
+        file.close();
+
+        QJsonParseError parseJsonErr;
+        QJsonDocument document = QJsonDocument::fromJson(value.toUtf8(),&parseJsonErr);
+        if(!(parseJsonErr.error == QJsonParseError::NoError))
+        {
+            qDebug()<<"解析json文件错误！";
+            return -1;
+        }
+        result = document.object();
+        return 0;
 }

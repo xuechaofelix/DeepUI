@@ -1,12 +1,12 @@
 #include "uimain.h"
 #include "ui_main.h"
 #include "textedit.h"
-#include<QFileSystemModel>
-#include<QDirModel>
-#include<QDir>
-#include<QDesktopWidget>
-#include<QTabWidget>
-#include<QLabel>
+#include <QFileSystemModel>
+#include <QDirModel>
+#include <QDir>
+#include <QDesktopWidget>
+#include <QTabWidget>
+#include <QLabel>
 #include<QFileDialog>
 #include<QDesktopServices>
 #include<QMessageBox>
@@ -16,6 +16,7 @@
 #include<QStringListModel>
 #include<QDebug>
 #include<QInputDialog>
+#include<QtMath>
 #include "choose.h"
 #include "file.h"
 #include "util.h"
@@ -48,9 +49,9 @@ UIMain::UIMain(QWidget *parent) :
     QDir dir = QDir::tempPath();
     qDebug() << dir.cd("Qt");
     qDebug() << dir.cd("lib");
-    qDebug() << dir.absoluteFilePath("epmc-standard.jar");
-    backend = new BackEnd(dir.absoluteFilePath("epmc-standard.jar"));
-    //backend = new BackEnd("/home/xuechao/xuechao/work/Lab/ePMC/ePMC/distributions/test/epmc-standard.jar");
+    qDebug() << dir.absoluteFilePath("deepsymbol");
+    backend = new BackEnd(dir.absoluteFilePath("deepsymbol"));
+    //backend = new BackEnd("/home/xuechao/xuechao/work/Lab/DeepAI/deepsymbol/deepsymbol");
     connect(backend, SIGNAL(sendOut(char * )), this,SLOT(on_readoutput(char *)) );
 
 }
@@ -64,6 +65,15 @@ void UIMain::initUI()
     splitterH->setStretchFactor(1,4);
     splitterV->setStretchFactor(splitterV->indexOf(ui->File),1000);
     splitterV->setStretchFactor(splitterV->indexOf(ui->V_out),1);
+
+    //spin and slide
+    ui->delta_value->setRange(0,1);
+    ui->delta_slider->setRange(0,(int)pow(10,UI_DELTA_PRECISION));
+    ui->delta_value->setSingleStep(pow(0.1,UI_DELTA_PRECISION));
+    ui->delta_value->setDecimals(UI_DELTA_PRECISION);
+    connect(ui->delta_slider, SIGNAL(valueChanged(int)), this, SLOT(changeSpinboxValue(int)));
+    connect(ui->delta_value, SIGNAL(valueChanged(double)), this, SLOT(changeSlideValue(double)));
+
 }
 
 UIMain::~UIMain()
@@ -226,23 +236,31 @@ void UIMain::createActions()
 #endif // !QT_NO_CLIPBOARD
 
     QMenu *settingMenu = menuBar()->addMenu(tr("&Set"));
-    /************************* set file type
-    QMenu * fileTypeMenu = new QMenu(tr("FileType"),this);
-    QActionGroup *fileTypegroup=new QActionGroup(this);
-    QAction * prismType= new QAction(tr("&Prism"),this);
-    QAction * janiType= new QAction(tr("&JANI"),this);
-    prismType->setCheckable(true);
-    janiType->setCheckable(true);
-    fileTypegroup->addAction(prismType);
-    fileTypegroup->addAction(janiType);
-    fileTypeMenu->addAction(prismType);
-    fileTypeMenu->addAction(janiType);
-    prismType->setChecked(true);
+    /************************* set robustness type ****************/
+    QMenu * robustnessTypeeMenu = new QMenu(tr("RobustnessType"),this);
+    robustnessTypeGroup=new QActionGroup(this);
+
+   QAction * LInfBallType= new QAction(ROBUSTNESS_TYPE_LINFBALL,this);
+    QAction * brightnessType= new QAction(ROBUSTNESS_TYPE_BRIGHTNESS,this);
+    QAction * customBoxType= new QAction(ROBUSTNESS_TYPE_CUSTOMBOX,this);
+    LInfBallType->setCheckable(true);
+    brightnessType->setCheckable(true);
+    customBoxType->setCheckable(true);
+    robustnessTypeGroup->addAction(LInfBallType);
+    robustnessTypeGroup->addAction(brightnessType);
+    robustnessTypeGroup->addAction(customBoxType);
+    robustnessTypeeMenu->addAction(LInfBallType);
+    robustnessTypeeMenu->addAction(brightnessType);
+    robustnessTypeeMenu->addAction(customBoxType);
+    LInfBallType->setChecked(true);
     //newAct->setShortcuts(QKeySequence::New);
-    //newAct->setStatusTip(tr("Create a new file"));
-    connect(fileTypegroup, SIGNAL(triggered(QAction*)), this, SLOT(changeFileType(QAction*)));
-    settingMenu->addMenu(fileTypeMenu);
-    *******************************************/
+    //newAct->setStatusTip(tr("Create a new file"));*/
+    //connect(robustnessTypeGroup, SIGNAL(triggered(QAction*)), this, SLOT(changeRobustnessType(QAction*)));
+    connect(LInfBallType, SIGNAL(triggered()), this, SLOT(LINFBALLTriggered()));
+    connect(brightnessType, SIGNAL(triggered()), this, SLOT(brightnessTriggered()));
+    connect(customBoxType, SIGNAL(triggered()), this, SLOT(CUSTOMBOXTriggered()));
+    settingMenu->addMenu(robustnessTypeeMenu);
+
 
     /********************** set plugin
     const QIcon pluginIcon = QIcon::fromTheme("document-save", QApplication::style()->standardIcon((enum QStyle::StandardPixmap)43));
@@ -305,17 +323,12 @@ void UIMain::Run(){
  if(this->currentProject == -1) return;
  runAction->setEnabled(false);
  ui->filterLevel->setEditable(false);
- backend->setCurrentModel(this->projects.at(currentProject)->getModelFile());
- backend->setCurrentFormule(this->projects.at(currentProject)->getFormuleFile());
- backend->setCurrentPluginFile(this->projects.at(currentProject)->getPluginFile());
- int fileType = this->projects.at(currentProject)->getModelType();
- if(fileType == PRISM_FILE)
- {
-     backend->setCurrentFileType("prism");
- }
- else if(fileType == JANI_FILE){
-     backend->setCurrentFileType("jani");
- }
+ QString projectParameters = this->projects.at(currentProject)->generateParametersList();
+ QString othersParameters = " --robust "+this->robustnessTypeGroup->checkedAction()->text()+
+                            " --delta "+ QString::number(this->ui->delta_value->value()) +
+                            " --dumpJSON "+JSON_RESULT_FILE;
+ backend->setCurrentParametersList(projectParameters+" "+othersParameters);
+
  ui->outText->setText("");
  ui->resultText->setText("");
  this->isFinalResult = false;
@@ -780,17 +793,6 @@ void UIMain::documentWasModified()
    // ui->editortabWidget->currentWidget()->setWindowModified(curtextEdit->document()->isModified());
 }
 
-void UIMain::changeFileType(QAction *a)
-{
-    a->setChecked(true);
-    if(this->currentProject == -1) return;
-    if(a->text() == "&Prism"){
-        this->projects.at(currentProject)->setModelType(PRISM_FILE);
-    }
-    else if(a->text() == "&JANI"){
-        this->projects.at(currentProject)->setModelType(JANI_FILE);
-    }
-}
 
 void UIMain::closeEvent(QCloseEvent *event)
 {
@@ -834,16 +836,16 @@ void UIMain::treeViewDoubleClick(const QModelIndex & index)
     loadFile(file);
 }
 
-void UIMain::configPluginList()
+/*void UIMain::configPluginList()
 {
     if(this->currentProject!= -1)
     {
-        Project * p = this->projects.at(this->currentProject);
+       // Project * p = this->projects.at(this->currentProject);
         pluginWidget = new UI_Plugin(p->getPluginConfigure()->getPluginFilePath(),p->getPluginConfigure()->getPluginUnaddedFileName(),p->getPluginConfigure()->getPluginAddedFileName(),this);
         pluginWidget->setModal(true);
         pluginWidget->show();
     }
-}
+}*/
 
 void UIMain::on_filterLevel_activated(int index)
 {
@@ -853,4 +855,27 @@ void UIMain::on_filterLevel_activated(int index)
 void UIMain::on_File_tabCloseRequested(int index)
 {
     this->files->removeAt(index);
+}
+void UIMain::LINFBALLTriggered()
+{
+    //this->projects.at(currentProject)->setRobustnessType(ROBUSTNESS_TYPE_LINFBALL);
+}
+void UIMain::brightnessTriggered()
+{
+
+    //this->projects.at(currentProject)->setRobustnessType(ROBUSTNESS_TYPE_BRIGHTNESS);
+}
+void UIMain::CUSTOMBOXTriggered()
+{
+
+   // this->projects.at(currentProject)->setRobustnessType(ROBUSTNESS_TYPE_CUSTOMBOX);
+}
+
+void UIMain::changeSlideValue(double value)
+{
+    ui->delta_slider->setValue((int)(value * pow(10,UI_DELTA_PRECISION)));
+}
+void UIMain::changeSpinboxValue(int value)
+{
+    ui->delta_value->setValue(value*pow(0.1,UI_DELTA_PRECISION));
 }

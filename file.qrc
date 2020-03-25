@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>resources/wordlist.txt</file>
-        <file>resources/epmc-standard.jar</file>
+        <file>resources/deepsymbol</file>
     </qresource>
 </RCC>

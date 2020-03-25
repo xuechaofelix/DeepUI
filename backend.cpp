@@ -1,9 +1,10 @@
 #include "backend.h"
-#include<QFileInfo>
-#include<QDebug>
-BackEnd::BackEnd(const QString jarFileName)
+#include <QFileInfo>
+#include <QDebug>
+BackEnd::BackEnd(const QString excuteFileName)
 {
-    this->jarFile = jarFileName;
+    this->excuteFile = excuteFileName;
+    QFile file(this->excuteFile);
     cmd = new QProcess(this);
     connect(cmd , SIGNAL(readyReadStandardOutput()) , this , SLOT(on_readoutput()));
     connect(cmd , SIGNAL(readyReadStandardError()) , this ,SLOT(on_readerror()));
@@ -12,6 +13,7 @@ BackEnd::BackEnd(const QString jarFileName)
     #if defined(Q_OS_WIN32)
     cmd->start("cmd.exe");
     #elif defined(Q_OS_LINUX)
+    file.setPermissions(QFile::ExeUser);
     cmd->start("bash");
     #endif
 
@@ -40,18 +42,12 @@ int BackEnd::setCurrentFormule(const QString formuleFile){
     this->currentFormule = formuleFile;
     return RUN_SUCCESS;
 }
-void BackEnd::setCurrentFileType(const QString fileType){
+void BackEnd::setCurrentParametersList(const QString parametersList){
 
-    this->currentFileType = fileType;
+    this->currentParametersList = parametersList;
 }
 
-void BackEnd::setCurrentPluginFile(const QString pluginFile)
-{
-    this->currentPluginFile = pluginFile;
-}
-QString BackEnd::getOutput(){
-    return out;
-}
+
 void BackEnd::on_readoutput()
 {
    // QString result =QString(cmd->readAllStandardOutput().data());
@@ -76,9 +72,8 @@ int BackEnd::run(){
 
     this->isBusy = true;
 
-    QString command = "java -jar "+this->jarFile +" check --model-input-files "+ this->currentModel +
-                      " --property-input-files "+ this->currentFormule +" --model-input-type "+ this->currentFileType +
-                      " --plugin-list-file "+   this->currentPluginFile
+    QString command = this->excuteFile +" " +
+                      this->currentParametersList
             ;
 
     qDebug() << command;

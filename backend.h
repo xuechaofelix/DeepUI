@@ -12,23 +12,21 @@ class BackEnd: public QObject
 {
     Q_OBJECT
 private:
-    QString jarFile;
+    QString excuteFile;
     bool isBusy = false;
     QString currentModel;
     QString currentFormule;
-    QString currentFileType;
-    QString currentPluginFile;
+    QString currentParametersList;
     QString out;
     QProcess * cmd;
 public:
 
-    BackEnd(const QString jarFileName);
+    BackEnd(const QString excuteFileName);
     bool getIsBusy();
     QString getOutput();
     int setCurrentModel(const QString modelFile);
     int setCurrentFormule(const QString formuleFile);
-    void setCurrentFileType(const QString fileType);
-    void setCurrentPluginFile(const QString pluginFile);
+    void setCurrentParametersList(const QString parametersList);
 
     int run();
 

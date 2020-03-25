@@ -14,6 +14,13 @@
 #define CREATE_FILE_SUCCESS 0
 #define CREATE_FILE_FAILED -1
 
+#define ROBUSTNESS_TYPE_LINFBALL "LINFBALL"
+#define ROBUSTNESS_TYPE_BRIGHTNESS "brightness"
+#define ROBUSTNESS_TYPE_CUSTOMBOX "CUSTOMBOX"
+
+#define UI_DELTA_PRECISION 3
+
+#define JSON_RESULT_FILE "/tmp/Qt/temp.json"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -43,7 +50,7 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private slots:
-    void configPluginList();
+   // void configPluginList();
 
     void newModelFile();
     void newFormuleFile();
@@ -57,7 +64,9 @@ private slots:
     void removeSubTab(int index);
     void changeSubTab(int index);
     void treeViewDoubleClick(const QModelIndex & index);
-    void changeFileType(QAction *a);
+    void LINFBALLTriggered();
+    void brightnessTriggered();
+    void CUSTOMBOXTriggered();
     int newProject();
     int openProject();
     void closeProject();
@@ -69,10 +78,14 @@ private slots:
 
     void on_File_tabCloseRequested(int index);
 
+    void changeSlideValue(double value);
+    void changeSpinboxValue(int value);
+
 private:
-    UI_Plugin * pluginWidget;
+   // UI_Plugin * pluginWidget;
     Ui::UIMain *ui;
     BackEnd * backend;
+    QActionGroup * robustnessTypeGroup;
     QAbstractItemModel *modelFromFile(const QString& fileName,QCompleter *completer);
     void initUI();
 

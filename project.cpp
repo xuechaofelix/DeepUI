@@ -9,11 +9,11 @@ Project::Project(const QString & path, const QString & name)
     this->path = path;
     this->name = name;
 
-    QDir dir(path);
-    Util::createFile(dir.absolutePath(),"addedplugin.txt");
-    Util::createFile(dir.absolutePath(),"unaddedplugin.txt");
+  //  QDir dir(path);
+  //  Util::createFile(dir.absolutePath(),"addedplugin.txt");
+  //  Util::createFile(dir.absolutePath(),"unaddedplugin.txt");
 
-    this->pcf = new PluginConfigure(dir.absolutePath(),"addedplugin.txt","unaddedplugin.txt");
+  //  this->pcf = new PluginConfigure(dir.absolutePath(),"addedplugin.txt","unaddedplugin.txt");
 
 }
 Project::Project(const QString & name)
@@ -63,7 +63,7 @@ void Project::open(QString projectFile)
 
 QString Project::serilize()
 {
-    return this->modelFile+";"+this->formuleFile+";"+QString("%1").arg(this->modelType)+";";
+    return this->modelFile+";"+this->formuleFile+";";
 }
 
 QString Project::getModelFileName()
@@ -77,22 +77,19 @@ QString Project::getFormuleFileName(){
 }
 
 
-QString Project::getPluginFile(){
-    return this->pcf->getAbsolutePluginAddedFile();
-}
 
 int Project::unserilize(const QString & project)
 {
     QStringList list = project.split(";");
-    if(list.size()<3) return UNSERILIZE_FAILED;
+    if(list.size()<2) return UNSERILIZE_FAILED;
     if(list[0].compare("") != 0)
         this->setModelFile(list[0]);
     if(list[1].compare("") != 0)
         this->setFormuleFile(list[1]);
-    bool * ok = new bool;
-    int type = list[2].toInt(ok);
-    if(! *ok) return UNSERILIZE_FAILED;
-    this->setModelType(type);
+   // bool * ok = new bool;
+    //int type = list[2].toInt(ok);
+    //if(! *ok) return UNSERILIZE_FAILED;
+    //this->setModelType(type);
     return UNSERILIZE_SUCCESS;
 }
 
@@ -108,19 +105,20 @@ void Project::setFormuleFile(const QString & formuleFileName)
 }
 QString Project::getModelFileSuffix()
 {
-    if(this->modelType == PRISM_FILE){
+    /*(if(this->robustnessType == PRISM_FILE){
         return ".prism";
     }
-    else if(this->modelType == JANI_FILE){
+    else if(this->robustnessType == JANI_FILE){
         return ".jani";
     }
     else {
         return "";
-    }
+    }*/
+    return ".rlv";
 }
 QString Project::getFormuleFileSuffix()
 {
-    return ".props";
+    return ".txt";
 }
 
 QString Project::getModelFile()
@@ -134,16 +132,16 @@ QString Project::getFormuleFile()
     return dir.absoluteFilePath(this->formuleFile);
 }
 
-void Project::setModelType(int modelType)
+/*void Project::setRobustnessType(QString robustnessType)
 {
-    this->modelType = modelType;
-    this->isSetModelType = true;
+    this->robustnessType = robustnessType;
+    this->isSetRobustnessType = true;
 }
 
-int Project::getModelType()
+QString Project::getRobustnessType()
 {
-    return this->modelType;
-}
+    return this->robustnessType;
+}*/
 
 QString Project::getPath()
 {
@@ -159,10 +157,18 @@ bool Project::isValidModelFile(){
 bool Project::isValidFormuleFile(){
     return this->isSetFormuleFile;
 }
-bool Project::isValidModelType(){
-    return this->isSetModelType;
-}
+/*bool Project::isValidRobustnessType(){
+    return this->isSetRobustnessType;
+}*/
+//todo
+QString Project::generateParametersList()
+{
+    if(!this->isValidModelFile()){
+        return "";
+    }
+    if(!this->isValidFormuleFile()){
+        return "";
+    }
 
-PluginConfigure* Project::getPluginConfigure(){
-    return this->pcf;
+    return "--network "+this->getModelFile()+" --image "+this->getFormuleFile();
 }

@@ -117,7 +117,37 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <layout class="QHBoxLayout" name="horizontalLayout" stretch="4,1">
+           <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,4,1">
+            <item>
+             <widget class="QLabel" name="delta">
+              <property name="text">
+               <string>Disturbance:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="delta_slider">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="delta_value">
+              <property name="cursor">
+               <cursorShape>ArrowCursor</cursorShape>
+              </property>
+              <property name="suffix">
+               <string/>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="stepType">
+               <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+              </property>
+             </widget>
+            </item>
             <item alignment="Qt::AlignRight">
              <widget class="QLabel" name="label">
               <property name="text">

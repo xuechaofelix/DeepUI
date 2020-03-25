@@ -1,0 +1,1 @@
+/home/xuechao/xuechao/work/Lab/DeepAI/example/test2/caffeprototxt_AI2_MNIST_FNN_1_testNetworkB.rlv;/home/xuechao/xuechao/work/Lab/DeepAI/example/test2/scripts_input_3_1746.txt;

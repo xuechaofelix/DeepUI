@@ -1,4 +1,4 @@
-#include "uimain.h"
+#include "mainui.h"
 
 #include <QApplication>
 #include <QDir>
@@ -23,7 +23,18 @@ int main(int argc, char *argv[])
     }
      QFileInfo info(tmpPath.absoluteFilePath("deepsymbol"));
      if(!info.isFile()){
-        if(! QFile::copy(":/resources/deepsymbol",info.absoluteFilePath()))
+         bool copyResult = false;
+#ifdef Q_OS_LINUX
+        copyResult= QFile::copy(":/resources/deepsymbol_linux",info.absoluteFilePath());
+#elif Q_OS_MAC
+         copyResult= QFile::copy(":/resources/deepsymbol_mac",info.absoluteFilePath());
+#elif Q_OS_WIN32
+         copyResult= QFile::copy(":/resources/deepsymbol_windows",info.absoluteFilePath());
+#else
+        qDebug() << "Unsupported arctecture";
+        return -7;
+#endif
+        if(!copyResult)
         {
             //QMessageBox::warning(this, "Worning", "Failed to access TemporaryFile!");
             qDebug() << "Failed to access TemporaryFile!";
@@ -42,7 +53,7 @@ int main(int argc, char *argv[])
         return -7;
     }*/
 
-    UIMain w;
-    w.show();
+    MainUI w;
+    w.showMaximized();
     return a.exec();
 }

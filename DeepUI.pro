@@ -18,38 +18,81 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     backend.cpp \
     choose.cpp \
+    comparerelation.cpp \
+    configueproject.cpp \
+    configurationview.cpp \
+    edge.cpp \
     file.cpp \
+    graphwidget.cpp \
     highlighter.cpp \
+    loadingwidget.cpp \
     main.cpp \
-    pluginconfigure.cpp \
+    mainui.cpp \
+    matrix.cpp \
+    network.cpp \
+    networkfile.cpp \
+    networklayer.cpp \
+    networklayerdata.cpp \
+    node.cpp \
+    outview.cpp \
     project.cpp \
     projectitem.cpp \
     projectmodel.cpp \
+    projectview.cpp \
+    resultview.cpp \
+    selectdialog.cpp \
+    settingview.cpp \
     textedit.cpp \
     treenode.cpp \
-    ui_plugin.cpp \
-    uimain.cpp \
+    updatenetworkthread.cpp \
     util.cpp
 
 HEADERS += \
     backend.h \
     choose.h \
+    comparerelation.h \
+    configueproject.h \
+    configurationview.h \
+    edge.h \
     file.h \
+    graphwidget.h \
     highlighter.h \
-    pluginconfigure.h \
+    loadingwidget.h \
+    mainui.h \
+    matrix.h \
+    network.h \
+    networkfile.h \
+    networklayer.h \
+    networklayerdata.h \
+    node.h \
+    outview.h \
     project.h \
     projectitem.h \
     projectmodel.h \
+    projectview.h \
+    resultview.h \
+    selectdialog.h \
+    settingview.h \
     textedit.h \
     treenode.h \
-    ui_plugin.h \
-    uimain.h \
+    updatenetworkthread.h \
     util.h
 
 FORMS += \
     choose.ui \
-    main.ui \
-    ui_plugin.ui
+    comparerelation.ui \
+    configueproject.ui \
+    configurationview.ui \
+    loadingwidget.ui \
+    mainui.ui \
+    matrix.ui \
+    network.ui \
+    networklayer.ui \
+    outview.ui \
+    projectview.ui \
+    resultview.ui \
+    selectdialog.ui \
+    settingview.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -6,8 +6,8 @@
 #include "projectitem.h"
 
 #define PROJECT_NODE 0
-#define MODEL_NODE 1
-#define FORMULE_NODE 2
+#define FILE_NODE 1
+#define TOOL_NODE 2
 #define MIDDLE_NODE 3
 class TreeNode
 {

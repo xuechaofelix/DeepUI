@@ -8,4 +8,7 @@
         <file>resources/run.png</file>
         <file>resources/icon.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>resources/loading.gif</file>
+    </qresource>
 </RCC>

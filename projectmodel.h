@@ -31,10 +31,12 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 
-    int addModel(ProjectItem * model);
-    int addFormule(ProjectItem * formule);
+    int addFile(ProjectItem * file,QString suffix);
+    int addTool(ProjectItem * tool);
+    int removeTool(ProjectItem * tool);
     int setActiveProject();
-    QString get(const QModelIndex &index) const;
+    QString getSelectTreeNodeName(const QModelIndex &index) const;
+    int getSelectTreeNodeType(const QModelIndex &index) const;
 private:
     TreeNode *rootItem;
     int currentProject=-1;

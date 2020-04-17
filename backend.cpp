@@ -8,18 +8,24 @@ BackEnd::BackEnd(const QString excuteFileName)
     cmd = new QProcess(this);
     connect(cmd , SIGNAL(readyReadStandardOutput()) , this , SLOT(on_readoutput()));
     connect(cmd , SIGNAL(readyReadStandardError()) , this ,SLOT(on_readerror()));
+    connect(cmd , SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(on_finished(int,QProcess::ExitStatus)));
     //cmd->setWorkingDirectory("~");
     //cmd->start("bash");
-    #if defined(Q_OS_WIN32)
-    cmd->start("cmd.exe");
-    #elif defined(Q_OS_LINUX)
+    //#if defined(Q_OS_WIN32)
+    //cmd->start("cmd.exe");
+    //#elif defined(Q_OS_LINUX)
     file.setPermissions(QFile::ExeUser);
-    cmd->start("bash");
-    #endif
+    //cmd->start("bash");
+    //#endif
 
-    cmd->waitForStarted();
+   // cmd->waitForStarted();
 
 
+}
+
+void BackEnd::on_finished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    emit this->finished(exitCode);
 }
 BackEnd::~BackEnd(){
     if(cmd){
@@ -77,9 +83,9 @@ int BackEnd::run(){
             ;
 
     qDebug() << command;
-    cmd->write("java --version\n");
-    cmd->write((command).toLocal8Bit() + '\n');
-
+    //cmd->write("java --version\n");
+    //cmd->write((command).toLocal8Bit() + '\n');
+    cmd->start(command);
     //cmd->execute(command);
     this->isBusy = false;
     return RUN_SUCCESS;

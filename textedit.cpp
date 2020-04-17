@@ -62,7 +62,7 @@
 
 //! [0]
 TextEdit::TextEdit(QString fileName,QWidget *parent)
-: QTextEdit(parent), fileName(fileName),c(0), parent(parent)
+: QTextEdit(parent), fileName(fileName),c(nullptr), parent(parent)
 {
     /*setPlainText(tr("This TextEdit provides autocompletions for words that have more than"
                     " 3 characters. You can trigger autocompletion using ") +
@@ -81,7 +81,7 @@ TextEdit::~TextEdit()
 void TextEdit::setCompleter(QCompleter *completer)
 {
     if (c)
-        QObject::disconnect(c, 0, this, 0);
+        QObject::disconnect(c, nullptr, this, nullptr);
 
     c = completer;
 

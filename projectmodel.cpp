@@ -21,8 +21,8 @@ void ProjectModel::addProject(Project * project)
     this->endInsertRows();
 
     this->beginInsertRows(this->index(this->currentProject,0),0,1);
-    node->appendChild(new TreeNode(new ProjectItem({"Model"}),MIDDLE_NODE,node));
-    node->appendChild(new TreeNode(new ProjectItem({"Property"}),MIDDLE_NODE,node));
+    node->appendChild(new TreeNode(new ProjectItem({"Files"}),MIDDLE_NODE,node));
+    node->appendChild(new TreeNode(new ProjectItem({"Tools"}),MIDDLE_NODE,node));
     this->endInsertRows();
 
     this->projects.append(project);
@@ -36,35 +36,76 @@ void ProjectModel::closeProject(int row)
     this->projects.removeAt(row);
     this->currentProject = this->projects.size()-1;
 }
-int ProjectModel::addModel(ProjectItem * model){
+int ProjectModel::addFile(ProjectItem * file,QString suffix){
     if(this->currentProject == -1) return -1;
     TreeNode * node = rootItem->child(this->currentProject)->child(0);
     QModelIndex node_index = this->index(0,0,this->index(this->currentProject,0));
-    if(node->childCount() >0){
-        this->beginRemoveRows(this->index(0,0,node_index),0,0);
-        node->removeChild(this->currentProject);
-        this->endRemoveRows();
+//    if(node->childCount() >0){
+//        this->beginRemoveRows(this->index(0,0,node_index),0,0);
+//        node->removeChild(this->currentProject);
+//        this->endRemoveRows();
+//    }
+    for(int i=0;i<node->childCount();i++)
+    {
+        TreeNode *child = node->child(i);
+        if(child->data(0).toString().endsWith(suffix))
+        {
+            this->beginRemoveRows(node_index,i,i);
+            node->removeChild(i);
+            this->endRemoveRows();
+            break;
+        }
     }
-    this->beginInsertRows(this->index(0,0,node_index),0,0);
-    node->appendChild(new TreeNode(model,MODEL_NODE,node));
-    this->endInsertRows();
-    return 0;
-}
-int ProjectModel::addFormule(ProjectItem * formule){
-    if(this->currentProject == -1) return -1;
-    TreeNode * node = rootItem->child(this->currentProject)->child(1);
-    QModelIndex node_index = this->index(1,0,this->index(this->currentProject,0));
-    if(node->childCount() >0) {
-        this->beginRemoveRows(this->index(0,0,node_index),0,0);
-        node->removeChild(this->currentProject);
-        this->endRemoveRows();
-    }
-    this->beginInsertRows(this->index(0,0,node_index),0,0);
-    node->appendChild(new TreeNode(formule,FORMULE_NODE,node));
+
+    this->beginInsertRows(node_index,node->childCount(),node->childCount());
+    node->appendChild(new TreeNode(file,FILE_NODE,node));
     this->endInsertRows();
     return 0;
 }
 
+int ProjectModel::addTool(ProjectItem * tool){
+    if(this->currentProject == -1) return -1;
+    TreeNode * node = rootItem->child(this->currentProject)->child(1);
+    QModelIndex node_index = this->index(1,0,this->index(this->currentProject,0));
+//    if(node->childCount() >0) {
+//        this->beginRemoveRows(this->index(0,0,node_index),0,0);
+//        node->removeChild(this->currentProject);
+//        this->endRemoveRows();
+//    }
+    for(int i=0;i<node->childCount();i++)
+    {
+        TreeNode *child = node->child(i);
+        if(child->data(1).toString().compare(tool->get(1).toString()) == 0)
+        {
+            this->beginRemoveRows(node_index,i,i);
+            node->removeChild(i);
+            this->endRemoveRows();
+            break;
+        }
+    }
+    this->beginInsertRows(node_index,node->childCount(),node->childCount());
+    node->appendChild(new TreeNode(tool,TOOL_NODE,node));
+    this->endInsertRows();
+    return 0;
+}
+
+int ProjectModel::removeTool(ProjectItem * tool)
+{
+    if(this->currentProject == -1) return -1;
+    TreeNode * node = rootItem->child(this->currentProject)->child(1);
+    QModelIndex node_index = this->index(1,0,this->index(this->currentProject,0));
+    for(int i=0;i<node->childCount();i++)
+    {
+        if(node->child(i)->data(1) == tool->get(1))
+        {
+            this->beginRemoveRows(node_index,i,i);
+            node->removeChild(i);
+            this->endRemoveRows();
+            break;
+        }
+    }
+    return 0;
+}
 
 TreeNode *ProjectModel::getItem(const QModelIndex &index) const
 {
@@ -75,18 +116,17 @@ TreeNode *ProjectModel::getItem(const QModelIndex &index) const
     }
     return rootItem;
 }
-QString ProjectModel::get(const QModelIndex &index) const
+QString ProjectModel::getSelectTreeNodeName(const QModelIndex &index) const
 {
     TreeNode * node = this->getItem(index);
-    if(node->getType() == MODEL_NODE || node->getType() == FORMULE_NODE){
-        QString name = node->data(0).toString();
-        QString path = node->data(1).toString();
-        QDir dir(path);
-        return dir.absoluteFilePath(name);
-    }
+    return node->data(0).toString();
 
-    return "";
+}
 
+int ProjectModel::getSelectTreeNodeType(const QModelIndex &index) const
+{
+    TreeNode * node = this->getItem(index);
+    return node->getType();
 }
 
 

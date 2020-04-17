@@ -18,7 +18,7 @@ int Util::createFile( const QString filePath, const QString fileName)
     tempDir.setCurrent(filePath);
     if(tempFile->exists(fileName))
     {
-        qDebug()<<fileName<<QObject::tr(" already Exist");
+        qDebug()<<fileName<<QObject::tr("already Exist");
 
         tempDir.setCurrent(currentDir);
         return -1;
@@ -35,11 +35,11 @@ int Util::createFile( const QString filePath, const QString fileName)
     return 0;
 }
 
-int Util::parseJsonFile(const QString filePath, const QString fileName, QJsonObject & result)
+QJsonObject * Util::parseJsonFile(const QString fileName)
 {
-    QDir filepath(filePath);
+    //QDir filepath(filePath);
 
-    QFile file(filepath.absoluteFilePath(fileName));
+    QFile file(fileName);
         file.open(QIODevice::ReadOnly | QIODevice::Text);
         QString value = file.readAll();
         file.close();
@@ -49,8 +49,9 @@ int Util::parseJsonFile(const QString filePath, const QString fileName, QJsonObj
         if(!(parseJsonErr.error == QJsonParseError::NoError))
         {
             qDebug()<<"解析json文件错误！";
-            return -1;
+            return nullptr;
         }
-        result = document.object();
-        return 0;
+        QJsonObject *  result = new QJsonObject();
+        *result = document.object();
+        return result;
 }

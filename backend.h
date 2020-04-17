@@ -33,10 +33,12 @@ public:
     ~BackEnd();
 signals:
     void sendOut(char * text);
+    void finished(int exitCode);
 
 private slots:
     void on_readoutput();
     void on_readerror();
+    void on_finished(int exitCode, QProcess::ExitStatus exitStatus);
 
 };
 

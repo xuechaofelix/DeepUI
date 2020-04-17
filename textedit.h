@@ -63,8 +63,8 @@ class TextEdit : public QTextEdit
     Q_OBJECT
 
 public:
-    TextEdit(QString fileName,QWidget *parent = 0);
-    ~TextEdit();
+    TextEdit(QString fileName,QWidget *parent = nullptr);
+    ~TextEdit() override;
 
     void setCompleter(QCompleter *c);
     QCompleter *completer() const;

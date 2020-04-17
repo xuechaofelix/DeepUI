@@ -7,12 +7,16 @@
 #include <QJsonParseError>
 #include <QJsonObject>
 
+
+
 class Util
 {
 public:
     Util();
     static int createFile(const QString filePath, const QString fileName);
-    static int parseJsonFile(const QString filePath, const QString fileName, QJsonObject & result);
+    static QJsonObject * parseJsonFile(const QString fileName);
+
 };
+
 
 #endif // UTIL_H

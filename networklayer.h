@@ -9,6 +9,7 @@
 #define NODE_STATUS_ACTIVE 0
 #define NODE_STATUS_UNKNOWN 1
 #define NODE_STATUS_UNACTIVE 2
+#define NODE_STATUS_CLEAR 3
 
 namespace Ui {
 class NetworkLayer;
@@ -37,12 +38,16 @@ public:
     void setInputNodeStatus(QString name, int status);
     void setOutputNodeStatus(QString name, int status);
 
+
+
     void saveLayer(QFile & file, int index);
     QString getLayerType();
     QString getName();
 
     const QStringList* getInputNames();
     const QStringList * getOutputNames();
+    int getNumOfInputNames();
+    int getNumOfOutputNames();
 
 public slots:
     void onInputViewChanged();
@@ -52,7 +57,6 @@ public slots:
 
 signals:
     void valueChanged();
-
 private:
     Ui::NetworkLayer *ui;
     Matrix * input=nullptr;

@@ -18,6 +18,7 @@ public:
 
 private slots:
     void on_button_accepted();
+    void choose(const QModelIndex & index);
 
 private:
     Ui::SelectDialog *ui;

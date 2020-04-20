@@ -39,9 +39,24 @@ void ResultView::parsingJsonFile(QString jsonFile)
             nodes = graph.value("number_of_nodes").toString().toInt();
             for(int i=0;i<nodes;i++)
             {
-                this->resultGraph->addNode(QString::number(i));
+                //this->resultGraph->addNode(QString::number(i));
             }
         }
+        QStringList names;
+        if(graph.contains(("names")))
+        {
+            QJsonValue value = graph.value("names");
+            if(value.isArray())
+            {
+                QJsonArray array = value.toArray();
+                int size =array.size();
+                for(int i=0;i<size;i++){
+                    names.append(array.at(i).toString());
+                    this->resultGraph->addNode(array.at(i).toString());
+                }
+            }
+        }
+
         if(graph.contains("edges"))
         {
             QJsonValue value = graph.value("edges");
@@ -50,7 +65,9 @@ void ResultView::parsingJsonFile(QString jsonFile)
                 QJsonArray array = value.toArray();
                 int size =array.size();
                 for(int i=0;i<size;i++){
-                   this->resultGraph->addEdge(array.at(i).toObject().value("from").toString(),array.at(i).toObject().value("to").toString());
+                    int indexFrom = array.at(i).toObject().value("from").toString().toInt();
+                    int indexTo = array.at(i).toObject().value("to").toString().toInt();
+                    this->resultGraph->addEdge(names.at(indexFrom),names.at(indexTo));
 
                 }
             }

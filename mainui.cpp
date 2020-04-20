@@ -19,6 +19,8 @@ MainUI::MainUI(QWidget *parent) :
     this->initUI();
 
     QDir dir = QDir::tempPath();
+    dir.cd("Qt");
+    dir.cd("lib");
     backend = new BackEnd(dir.absoluteFilePath("deepsymbol"));
 
    // backend = new BackEnd("/home/xuechao/xuechao/work/Lab/DeepAI/deepsymbol/deepsymbol");
@@ -80,12 +82,19 @@ void MainUI::initUI()
     connect(this->resultView,SIGNAL(updateNetworkNodeStatus(QJsonObject)),this->settingView,SLOT(on_updateNetworkNodeStatus(QJsonObject)));
 
 }
+inline QString generateAbsoluteResultJsonFile(QString jsonFile)
+{
+    QDir dir = QDir::tempPath();
+    dir.cd("Qt");
+    dir.cd("lib");
+    return dir.absoluteFilePath(jsonFile);
+}
 void MainUI::Run(){
  if(!this->projectView->isValidProject()) return;
  QString projectParameters = this->projectView->getProjectParameters();
  QString othersParameters = " --robust "+this->settingView->getRobustnessType()+
                             " --delta "+ QString::number(this->settingView->getDelta()) +
-                            " --dumpJSON "+JSON_RESULT_FILE;
+                            " --dumpJSON "+generateAbsoluteResultJsonFile(JSON_RESULT_FILE);
 
  backend->setCurrentParametersList(projectParameters+" "+othersParameters);
 
@@ -97,31 +106,11 @@ void MainUI::Run(){
 void MainUI::verifyFinished(int exitCode)
 {
     if(exitCode == 0)
-        this->resultView->parsingJsonFile(JSON_RESULT_FILE);
-}
-QString MainUI::parsingFinalResult()
-{
-    QString result = "";
-    QJsonObject * jsonObj = Util::parseJsonFile(JSON_RESULT_FILE);
-    if(jsonObj==nullptr) return "Parsing JSON file failed";
-    int nodes = 0;
-    if(jsonObj->contains("number_of_nodes")){
-        nodes = jsonObj->value("number_of_nodes").toInt();
-    }
-    if(jsonObj->contains("edges"))
     {
-        QJsonValue value = jsonObj->value("edges");
-        if(value.isArray())
-        {
-            QJsonArray array = value.toArray();
-            for(int i=0;i<array.size();i++){
-                result += "from "+array.at(i).toObject().value("from").toString()+
-                          " to " + array.at(i).toObject().value("to").toString()+"\n";
-            }
-        }
+        this->resultView->parsingJsonFile(generateAbsoluteResultJsonFile(JSON_RESULT_FILE));
     }
-    return result;
 }
+
 void MainUI::on_readoutput(char * out)
 {
     QString str(out);

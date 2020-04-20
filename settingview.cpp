@@ -62,9 +62,10 @@ void SettingView::addTool(QString tool,Project * project)
             }
              else{
                  qDebug() << " layer index is not correct:"<<index <<layerStatus.value("index").toString().toInt();
-             }
+             } 
 
          }
+         this->ui->setting->setCurrentWidget(this->network);
      }
  }
 
@@ -98,7 +99,8 @@ void SettingView::removeTool(QString tool)
         //this->loadWiget->show();
 //        this->loadWiget= new LoadingWidget();
 //        this->loadWiget->show();
-        this->updateThread->start();
+        //this->updateThread->start();
+        this->network->clearBoundOfNode();
     }
 }
 

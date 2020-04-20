@@ -143,7 +143,7 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
     QFont font1;
     font1.setBold(false);
-    font1.setPointSize(5);
+    font1.setPointSize(4);
     painter->setBrush(Qt::NoBrush);
     painter->setFont(font1);
     painter->setPen(Qt::white);

@@ -1,6 +1,8 @@
 #include "matrix.h"
 #include "ui_matrix.h"
 #include <QDebug>
+#include <QScrollBar>
+#include <QToolTip>
 
 Matrix::Matrix(const QString name, QStringList * rowHeadName,QStringList * columnHeadName, bool isSetDefaultHeadName,QWidget *parent) :
     QWidget(parent),
@@ -56,6 +58,11 @@ Matrix::Matrix(const QString name, QStringList * rowHeadName,QStringList * colum
     ui->matrix->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->matrix->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+    ui->matrix->verticalScrollBar()->installEventFilter(this);
+    ui->matrix->horizontalScrollBar()->installEventFilter(this);
+
+    ui->matrix->viewport()->installEventFilter(this);//安装事件过滤器
+    ui->matrix->viewport()->setMouseTracking(true);//true鼠标移动触发 false关闭移动触发
 }
 
 
@@ -89,6 +96,7 @@ void Matrix::setEditable(bool flag)
 
 QString Matrix::getData(int row,int column)
 {
+
     return this->model->item(row,column)->text();
 }
 
@@ -144,7 +152,35 @@ int Matrix::insertItem(int row,int column, QString value)
     return 0;
 }
 
+bool Matrix::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui->matrix->verticalScrollBar() || obj == ui->matrix->horizontalScrollBar())
+    {
+        if(event->type() == QEvent::Wheel)
+        {
 
+            return true;
+        }
+    }
+    else if(obj == ui->matrix->viewport())
+        {
+            if(event->type() == QEvent::MouseMove)
+            {
+                QPoint p = ui->matrix->viewport()->mapFromGlobal(QCursor::pos());
+                choseItem(ui->matrix->indexAt(p));
+            }
+        }
+    return QWidget::eventFilter(obj, event);
+}
+void Matrix::choseItem(QModelIndex index)
+{
+    if(!index.isValid())
+        return;
+    QString text = QString("%1").arg(index.data().toString());
+    if(text.isEmpty())
+        return;
+    QToolTip::showText(QCursor::pos(),text);
+}
 Matrix::~Matrix()
 {
     delete ui;

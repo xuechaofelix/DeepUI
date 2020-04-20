@@ -164,6 +164,27 @@ void Network::setBoundOfNode(int index, QString nodeName, QString inf, QString s
         layer->setInputNodeStatus(nodeName,status);
     }
 }
+void Network::clearBoundOfNode()
+{
+    for(int i=0;i<this->layers->size();i++)
+    {
+        NetworkLayer * layer = this->layers->at(i);
+        for(int j=0;j<layer->getNumOfOutputNames();j++)
+        {
+            layer->setOutput(j,"","");
+            layer->setOutputNodeStatus(j,NODE_STATUS_CLEAR);
+        }
+        if(i<this->layers->size()-1)
+        {
+            layer =  this->layers->at(i+1);
+            for(int j=0;j<layer->getNumOfInputNames();j++)
+            {
+                layer->setInput(j,"","");
+                layer->setInputNodeStatus(j,NODE_STATUS_CLEAR);
+            }
+        }
+    }
+}
 
 int Network::layerIndexOf(QString layerName)
 {

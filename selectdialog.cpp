@@ -10,10 +10,10 @@ SelectDialog::SelectDialog(QString name, QStringList * items,QWidget *parent) :
 
     QStringListModel *model = new QStringListModel(this);
 
-
     model->setStringList(*items);
     this->ui->items->setModel(model);
     this->ui->name->setText(name);
+    connect(ui->items, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(choose(const QModelIndex &)));
 }
 
 SelectDialog::~SelectDialog()
@@ -27,6 +27,12 @@ QString SelectDialog::getResult()
 }
 
 
+void SelectDialog::choose(const QModelIndex & index)
+{
+    this->result = ui->items->model()->data(index).toString();
+    this->accept();
+
+}
 void SelectDialog::on_button_accepted()
 {
     QModelIndex  index;

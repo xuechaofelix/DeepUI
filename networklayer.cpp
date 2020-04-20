@@ -15,9 +15,8 @@ NetworkLayer::NetworkLayer(QString name, QString layerType,int flag,QStringList 
     this->flag = flag;
 
     if((flag & 1) == 1){
-
-            this->input = new Matrix("Input", inputName, nullptr);
-            this->ui->V_1_2->addWidget(this->input,2);
+        this->input = new Matrix("Input", inputName, nullptr);
+        this->ui->V_1_2->addWidget(this->input,2);
         for(int i=0;i<inputName->size();i++)
         {
             this->inputName->append(inputName->at(i));
@@ -30,7 +29,7 @@ NetworkLayer::NetworkLayer(QString name, QString layerType,int flag,QStringList 
     {
         this->weight = new Matrix("Weight", outputName,inputName);
         connect(this->weight,SIGNAL(onValueChanged()),this,SLOT(onWeightViewChanged()));
-        this->ui->V_1_2->addWidget(this->weight,5);
+        this->ui->V_1_2->addWidget(this->weight,3);
     }
     if(((flag >>2) & 1) == 1)
     {
@@ -42,7 +41,7 @@ NetworkLayer::NetworkLayer(QString name, QString layerType,int flag,QStringList 
     {
         if(flag == 8){
             this->output = new Matrix("data", nullptr, inputName);
-            this->ui->V_1_2->addWidget(this->output,5);
+            this->ui->V_1_2->addWidget(this->output,1);
 
             for(int i=0;i<inputName->size();i++)
             {
@@ -66,9 +65,15 @@ NetworkLayer::NetworkLayer(QString name, QString layerType,int flag,QStringList 
 
 
 
-
 }
-
+int NetworkLayer::getNumOfInputNames()
+{
+    return this->inputName->size();
+}
+int NetworkLayer::getNumOfOutputNames()
+{
+    return this->outputName->size();
+}
 
 const QStringList* NetworkLayer::getInputNames()
 {
@@ -261,6 +266,10 @@ void NetworkLayer::setInputNodeStatus(int index, int status)
     else if (status == NODE_STATUS_UNACTIVE) {
         color = Qt::red;
     }
+    else if(status ==NODE_STATUS_CLEAR)
+    {
+        color = Qt::white;
+    }
     else
     {
         qDebug() << "Can not found this kind of status code:"<< status;
@@ -290,6 +299,10 @@ void NetworkLayer::setOutputNodeStatus(int index, int status)
     }
     else if (status == NODE_STATUS_UNACTIVE) {
         color = Qt::red;
+    }
+    else if(status ==NODE_STATUS_CLEAR)
+    {
+        color = Qt::white;
     }
     else
     {

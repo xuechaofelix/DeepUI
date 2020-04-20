@@ -13,7 +13,7 @@
 #include <QJsonObject>
 
 
-#define JSON_RESULT_FILE "/tmp/Qt/temp.json"
+#define JSON_RESULT_FILE "VerifyResult.json"
 
 namespace Ui {
 class MainUI;
@@ -67,7 +67,6 @@ private:
 
     void Run();
     QList<QString> filter(QString out);
-    QString parsingFinalResult();
 };
 
 #endif // MAINUI_H

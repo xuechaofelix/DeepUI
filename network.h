@@ -33,6 +33,7 @@ public:
     int layerIndexOf(QString layerName);
 
     void setBoundOfNode(int index, QString nodeName, QString inf, QString sup);
+    void clearBoundOfNode();
 
     void reload();
     int updateUI(QList<NetworkLayerData *> * layers);

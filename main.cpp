@@ -24,11 +24,12 @@ int main(int argc, char *argv[])
      QFileInfo info(tmpPath.absoluteFilePath("deepsymbol"));
      if(!info.isFile()){
          bool copyResult = false;
-#ifdef Q_OS_LINUX
+
+#if defined(Q_OS_LINUX)
         copyResult= QFile::copy(":/resources/deepsymbol_linux",info.absoluteFilePath());
-#elif Q_OS_MAC
+#elif defined(Q_OS_MAC)
          copyResult= QFile::copy(":/resources/deepsymbol_mac",info.absoluteFilePath());
-#elif Q_OS_WIN32
+#elif defined(Q_OS_WIN32)
          copyResult= QFile::copy(":/resources/deepsymbol_windows",info.absoluteFilePath());
 #else
         qDebug() << "Unsupported arctecture";

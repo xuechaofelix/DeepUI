@@ -41,6 +41,8 @@ public:
     bool isSetRowHeadName();
     bool isSetColumnHeadName();
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);//事件过滤器
 private:
     Ui::Matrix *ui;
     QString name = "matrix_*";
@@ -49,6 +51,8 @@ private:
     QStringList * rowHeadName = new QStringList();
     QStringList * columnHeadName = new QStringList();
     QStandardItemModel *model = new QStandardItemModel(this);
+
+    void choseItem(QModelIndex index);
 
 signals:
     void onValueChanged();

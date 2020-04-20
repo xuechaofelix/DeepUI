@@ -21,7 +21,7 @@ GraphWidget::GraphWidget(QWidget *parent)
     setViewportUpdateMode(BoundingRectViewportUpdate);
     setRenderHint(QPainter::Antialiasing);
     setTransformationAnchor(AnchorUnderMouse);
-    scale(qreal(0.8), qreal(0.8));
+    scale(qreal(2), qreal(2));
     //setMinimumSize(400, 400);
 //! [0]
 
